@@ -16,7 +16,7 @@ fun main() {
                     .map { (chargeTime, travelTime) -> distanceTravelled(chargeTime, travelTime) }
                     .filter { it > distanceToBeat }
                 possibilities.size
-            }.reduce { acc, i -> acc * i }
+            }.multiply()
     }
 
     fun part2(input: List<String>): Long {
