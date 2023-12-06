@@ -19,3 +19,24 @@ fun String.md5() = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteA
  * The cleaner shorthand for printing output.
  */
 fun Any?.println() = println(this)
+
+fun String.toIntList(vararg delimiters: Char = charArrayOf(' ')): List<Int> =
+    this.split(*delimiters)
+        .mapNotNull(String::toIntOrNull)
+
+fun String.toLongList(vararg delimiters: Char = charArrayOf(' ')): List<Long> =
+    this.split(*delimiters)
+        .mapNotNull(String::toLongOrNull)
+
+fun <T : Any> List<T>.splitBy(deliminator: T): List<List<T>> {
+    return this.fold(mutableListOf(mutableListOf<T>())) { lists, current ->
+        if (current == deliminator) {
+            lists.add(mutableListOf())
+        } else {
+            lists.last().add(current)
+        }
+        lists
+    }
+}
+
+fun String.parseDigitsToLong(): Long? = this.filter(Char::isDigit).toLongOrNull()
