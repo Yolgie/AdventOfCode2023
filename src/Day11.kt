@@ -23,10 +23,10 @@ fun main() {
         expandedInput: List<String>,
         factor: Int,
         coordinate: Pair<Int, Int>
-    ) = manhattanPath.map { coordinate -> expandedInput.get(coordinate) }
+    ) = manhattanPath.map(expandedInput::get)
         .map { symbol ->
             when (symbol) {
-                galaxyChar, spaceChar -> 1;
+                galaxyChar, spaceChar -> 1
                 expansionChar -> factor
                 else -> throw Exception("Invalid Character in map: $symbol at $coordinate")
             }
