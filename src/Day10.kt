@@ -4,9 +4,13 @@ fun main() {
     val day = 10
 
     fun getDirections(input: List<String>, currentPosition: Pair<Int, Int>): Set<Direction> =
-        input.get(currentPosition)?.toPipe()?.directions ?: emptySet()
+        input.getOrNull(currentPosition)?.toPipe()?.directions ?: emptySet()
 
-    fun getNextStep(input: List<String>, currentPosition: Pair<Int, Int>, direction: Direction): Pair<Pair<Int, Int>, Direction?> {
+    fun getNextStep(
+        input: List<String>,
+        currentPosition: Pair<Int, Int>,
+        direction: Direction
+    ): Pair<Pair<Int, Int>, Direction?> {
         val nextPosition = currentPosition.get(direction)
         val nextDirection = getDirections(input, nextPosition).filterNot { it == direction.opposite }.singleOrNull()
         return nextPosition to nextDirection
@@ -27,12 +31,13 @@ fun main() {
         }.single()
 
         val startDirections = getStartDirections(input, start)
-        val path = generateSequence<Pair<Pair<Int, Int>, Direction?>>(start to startDirections.first()) { (currentPosition, direction) ->
-            println("$currentPosition ($direction)")
-            val nextStep = getNextStep(input, currentPosition, requireNotNull(direction))
-            if (nextStep.second == null) null
-            else nextStep
-        }
+        val path =
+            generateSequence<Pair<Pair<Int, Int>, Direction?>>(start to startDirections.first()) { (currentPosition, direction) ->
+                println("$currentPosition ($direction)")
+                val nextStep = getNextStep(input, currentPosition, requireNotNull(direction))
+                if (nextStep.second == null) null
+                else nextStep
+            }
         val result = path.toList()
 
         return ceil(result.size / 2.0).toInt()
@@ -71,10 +76,6 @@ enum class Direction(val coordinate: Pair<Int, Int>) {
 }
 
 fun Pair<Int, Int>.get(direction: Direction): Pair<Int, Int> = this + direction.coordinate
-
-private operator fun Pair<Int, Int>.plus(other: Pair<Int, Int>) = this.first + other.first to this.second + other.second
-
-fun List<String>.get(coordinate: Pair<Int, Int>): Char? = this.getOrNull(coordinate.second)?.getOrNull(coordinate.first)
 
 enum class Pipe(val symbol: Char, val directions: Set<Direction>) {
     VERTICAL_PIPE('|', setOf(Direction.UP, Direction.DOWN)),

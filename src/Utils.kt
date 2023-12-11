@@ -50,3 +50,33 @@ fun String.parseDigitsToLong(): Long? = this.filter(Char::isDigit).toLongOrNull(
 fun Collection<Int>.multiply() = this.reduce { acc, i -> acc * i }
 
 fun Collection<Long>.multiply() = this.reduce { acc, i -> acc * i }
+
+fun Sequence<BigInteger>.sum(): BigInteger = this.fold(BigInteger.ZERO) { sum, next -> sum + next }
+
+fun Iterable<BigInteger>.sum(): BigInteger = this.fold(BigInteger.ZERO) { sum, next -> sum + next }
+
+operator fun Pair<Int, Int>.plus(other: Pair<Int, Int>) = this.first + other.first to this.second + other.second
+
+fun List<String>.getOrNull(coordinate: Pair<Int, Int>): Char? = this.getOrNull(coordinate.second)?.getOrNull(coordinate.first)
+
+fun List<String>.get(coordinate: Pair<Int, Int>): Char = this.get(coordinate.second).get(coordinate.first)
+
+fun Pair<Int, Int>.manhattanDistance(other: Pair<Int, Int>): Int {
+    return kotlin.math.abs(this.first - other.first) + kotlin.math.abs(this.second - other.second)
+}
+
+fun getManhattanPathSequence(start: Pair<Int, Int>, end: Pair<Int, Int>): Sequence<Pair<Int, Int>> {
+    val horizontalPath = if (start.first <= end.first) {
+        (start.first..end.first)
+    } else {
+        (start.first downTo end.first)
+    }.asSequence().map { x -> Pair(x, start.second) }
+
+    val verticalPath = if (start.second <= end.second) {
+        ((start.second + 1)..end.second) // +1 to avoid duplication at the corner
+    } else {
+        ((start.second - 1) downTo end.second) // -1 to avoid duplication at the corner
+    }.asSequence().map { y -> Pair(end.first, y) }
+
+    return horizontalPath + verticalPath
+}
