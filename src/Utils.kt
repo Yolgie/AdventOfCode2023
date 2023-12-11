@@ -22,6 +22,27 @@ fun String.md5() = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteA
  */
 fun Any?.println() = println(this)
 
+fun <T> Iterable<T>.printEach(label: String = ""): Iterable<T> {
+    this.forEach { item -> if (label.isNotBlank()) println("$label: $item") else println(item) }
+    return this
+}
+
+fun <T> Iterable<T>.printEachIndexed(label: String = ""): Iterable<T> {
+    this.forEachIndexed { index, item -> println("$label$index: $item") }
+    return this
+}
+
+fun <T> Iterable<T>.printIterableLine(label: String = ""): Iterable<T> {
+    if (label.isNotBlank()) println("$label: $this") else println(this)
+    return this
+}
+
+fun <T> Sequence<T>.printSequence(label: String = ""): Sequence<T> {
+    val materializedList = this.toList()
+    if (label.isNotBlank()) println("$label: $materializedList") else println(materializedList)
+    return materializedList.asSequence()
+}
+
 fun String.toIntList(vararg delimiters: Char = charArrayOf(' ')): List<Int> =
     this.split(*delimiters)
         .mapNotNull(String::toIntOrNull)
@@ -33,6 +54,10 @@ fun String.toIntList(regex: Regex): List<Int> =
 fun String.toLongList(vararg delimiters: Char = charArrayOf(' ')): List<Long> =
     this.split(*delimiters)
         .mapNotNull(String::toLongOrNull)
+
+fun String.toBigIntegerSeqence(vararg delimiters: Char = charArrayOf(' ')): Sequence<BigInteger> =
+    this.splitToSequence(*delimiters)
+        .mapNotNull(String::toBigIntegerOrNull)
 
 fun <T : Any> List<T>.splitBy(deliminator: T): List<List<T>> {
     return this.fold(mutableListOf(mutableListOf<T>())) { lists, current ->
@@ -79,4 +104,8 @@ fun getManhattanPathSequence(start: Pair<Int, Int>, end: Pair<Int, Int>): Sequen
     }.asSequence().map { y -> Pair(end.first, y) }
 
     return horizontalPath + verticalPath
+}
+
+fun <T> Iterable<T>.allEqual(): Boolean {
+    return this.all { it == this.first() }
 }

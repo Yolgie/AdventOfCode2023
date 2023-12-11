@@ -11,10 +11,13 @@ fun main() {
 
     // test if implementation meets criteria from the description, like:
     val testInput = readInput("Day${"%02d".format(day)}_test")
-    check(part1(testInput) == 0) { "Part 1 failed with ${part1(testInput)}" }
-//    check(part2(testInput) == 30) { "Part 2 failed with ${part2(testInput)}" }
-
     val input = readInput("Day${"%02d".format(day)}")
+
+    val testPart1 = part1(testInput)
+    check(testPart1 == 0) { "Part 1 failed with $testPart1" }
     part1(input).println()
+
+    val testPart2 = part2(testInput)
+    check(testPart2 == 0) { "Part 2 failed with $testPart2" }
     part2(input).println()
 }
