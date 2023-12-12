@@ -141,3 +141,12 @@ fun <T> measureTime(label: String = "", block: () -> T): T {
     println("${label}Time taken: $durationInMillis ($timeFormatted)")
     return result
 }
+
+fun <K, V> Map<K, V>.containsAllValues(vararg values: V): Boolean {
+    val valueCounts = values.groupingBy { it }.eachCount()
+    return valueCounts.all { (value, count) ->
+        this.values.count { it == value } >= count
+    }
+}
+
+fun String.distribution() = this.groupingBy { it }.eachCount()

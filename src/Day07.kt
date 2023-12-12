@@ -10,8 +10,8 @@ fun main() {
 
         val sortedHands = hands.keys.sortedWith(handComparatorLexical).reversed()
         val bids = sortedHands
-            .filterNot { hands.get(it) == 0 } // exclude testdata
-            .mapIndexed { rank, hand -> (rank + 1) * hands.get(hand)!! }
+            .filterNot { hands[it] == 0 } // exclude testdata
+            .mapIndexed { rank, hand -> (rank + 1) * hands[hand]!! }
 //        println(sortedHands)
 
         return bids.sum()
@@ -26,11 +26,12 @@ fun main() {
 
         val sortedHands = hands.keys.sortedWith(handComparatorWithJokers).reversed()
         val bids = sortedHands
-            .filterNot { hands.get(it) == 0 } // exclude testdata
-            .mapIndexed { rank, hand -> (rank + 1) * hands.get(hand)!! }
+            .filterNot { hands[it] == 0 } // exclude testdata
+            .mapIndexed { rank, hand -> (rank + 1) * hands[hand]!! }
         println(sortedHands)
 
-        return bids.sum()    }
+        return bids.sum()
+    }
 
     // test if implementation meets criteria from the description, like:
     val testInput = readInput("Day${"%02d".format(day)}_test")
@@ -76,11 +77,11 @@ enum class HandType(val matcher: (String) -> Boolean) : Comparable<HandType> {
     }
 }
 
-fun String.matchHand() = HandType.matchHand(this)
+private fun String.matchHand() = HandType.matchHand(this)
 
-fun String.matchHandWithJokers() = HandType.matchHandWithJokers(this)
+private fun String.matchHandWithJokers() = HandType.matchHandWithJokers(this)
 
-val cardOrderComparator: Comparator<String> = Comparator { one, other ->
+private val cardOrderComparator: Comparator<String> = Comparator { one, other ->
     one.zip(other)
         .map { (charOne, charOther) -> allCards.indexOf(charOne) to allCards.indexOf(charOther) }
         .find { it.first != it.second }
@@ -88,10 +89,10 @@ val cardOrderComparator: Comparator<String> = Comparator { one, other ->
         ?: 0
 }
 
-val handComparatorLexical: Comparator<String> = compareBy<String> { it.matchHand() }
+private val handComparatorLexical: Comparator<String> = compareBy<String> { it.matchHand() }
     .thenComparing(cardOrderComparator)
 
-val cardOrderComparatorWithJokers: Comparator<String> = Comparator { one, other ->
+private val cardOrderComparatorWithJokers: Comparator<String> = Comparator { one, other ->
     one.zip(other)
         .map { (charOne, charOther) -> allCardsWithJokers.indexOf(charOne) to allCardsWithJokers.indexOf(charOther) }
         .find { it.first != it.second }
@@ -99,36 +100,5 @@ val cardOrderComparatorWithJokers: Comparator<String> = Comparator { one, other 
         ?: 0
 }
 
-val handComparatorWithJokers: Comparator<String> = compareBy<String> { it.matchHandWithJokers() }
+private val handComparatorWithJokers: Comparator<String> = compareBy<String> { it.matchHandWithJokers() }
     .thenComparing(cardOrderComparatorWithJokers)
-
-val handComparator: Comparator<String> = Comparator { one, other ->
-    val handTypeComparison = one.matchHand().compareTo(other.matchHand())
-    if (handTypeComparison != 0) handTypeComparison
-    else compareHandDistributions(one.distribution(), other.distribution())
-}
-
-fun compareHandDistributions(hand1: Map<Char, Int>, hand2: Map<Char, Int>): Int {
-    val sortedMap1 = hand1.entries.sortedWith(
-        compareByDescending(Map.Entry<Char, Int>::value)
-            .thenComparing { (key, _) -> allCards.indexOf(key) })
-    val sortedMap2 = hand2.entries.sortedWith(
-        compareByDescending(Map.Entry<Char, Int>::value)
-            .thenComparing { (key, _) -> allCards.indexOf(key) })
-
-    return sortedMap1.zip(sortedMap2).fold(0) { acc, (entry1, entry2) ->
-        if (acc != 0) return acc
-        compareByDescending<Map.Entry<Char, Int>>(Map.Entry<Char, Int>::value)
-            .thenComparing { (key, _) -> allCards.indexOf(key) }
-            .compare(entry1, entry2)
-    }
-}
-
-fun <K, V> Map<K, V>.containsAllValues(vararg values: V): Boolean {
-    val valueCounts = values.groupingBy { it }.eachCount()
-    return valueCounts.all { (value, count) ->
-        this.values.count { it == value } >= count
-    }
-}
-
-fun String.distribution() = this.groupingBy { it }.eachCount()

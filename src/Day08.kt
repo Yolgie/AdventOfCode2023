@@ -43,7 +43,6 @@ fun main() {
         val skip = if (startingNodes.count() > 3) 3000000000L else 0L
 
         return runningSequence.dropLong(skip)
-            .also { _ -> println("finished skipping $skip") }
             .takeWhile { currentNodes -> !currentNodes.all { it in endNodes } }
             .countAsLong() + skip
     }
