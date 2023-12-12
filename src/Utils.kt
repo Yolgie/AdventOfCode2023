@@ -82,7 +82,8 @@ fun Iterable<BigInteger>.sum(): BigInteger = this.fold(BigInteger.ZERO) { sum, n
 
 operator fun Pair<Int, Int>.plus(other: Pair<Int, Int>) = this.first + other.first to this.second + other.second
 
-fun List<String>.getOrNull(coordinate: Pair<Int, Int>): Char? = this.getOrNull(coordinate.second)?.getOrNull(coordinate.first)
+fun List<String>.getOrNull(coordinate: Pair<Int, Int>): Char? =
+    this.getOrNull(coordinate.second)?.getOrNull(coordinate.first)
 
 fun List<String>.get(coordinate: Pair<Int, Int>): Char = this.get(coordinate.second).get(coordinate.first)
 
@@ -108,4 +109,35 @@ fun getManhattanPathSequence(start: Pair<Int, Int>, end: Pair<Int, Int>): Sequen
 
 fun <T> Iterable<T>.allEqual(): Boolean {
     return this.all { it == this.first() }
+}
+
+fun Sequence<*>.countAsLong(): Long {
+    var count = 0L
+    for (element in this) {
+        count++
+    }
+    return count
+}
+
+fun <T> Sequence<T>.dropLong(n: Long): Sequence<T> = sequence {
+    var skipped = 0L
+    for (element in this@dropLong) {
+        if (skipped < n) {
+            skipped++
+            continue
+        }
+        yield(element)
+    }
+}
+
+fun <T> measureTime(label: String = "", block: () -> T): T {
+    val startTime = System.nanoTime()
+    val result = block()
+    val endTime = System.nanoTime()
+    val durationInMillis = (endTime - startTime) / 1_000_000
+    val hours = durationInMillis / 3_600_000
+    val minutes = (durationInMillis % 3_600_000) / 60_000
+    val timeFormatted = "%02dh %02dm".format(hours, minutes)
+    println("${label}Time taken: $durationInMillis ($timeFormatted)")
+    return result
 }
