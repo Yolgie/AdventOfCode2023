@@ -150,3 +150,23 @@ fun <K, V> Map<K, V>.containsAllValues(vararg values: V): Boolean {
 }
 
 fun String.distribution() = this.groupingBy { it }.eachCount()
+
+fun <T> List<T>.repeat(n: Int): List<T> = List(n) { this }.flatten()
+
+fun <T> iterateUntilStable(seed: T, operation: (T) -> T): T {
+    return generateSequence(seed, operation)
+        .reduce { acc, value -> if (acc == value) return acc else value }
+}
+
+fun String.count(char: Char) = this.count { it == char }
+
+inline fun <T> Iterable<T>.countNot(predicate: (T) -> Boolean): Int = this.count { !predicate(it) }
+
+fun <T> Pair<T, T>.equals() = this.first == this.second
+
+fun String.hammingDistance(other: String): Int = this.zip(other).countNot(Pair<Char, Char>::equals)
+
+fun List<String>.transpose(): List<String> =
+    this.first().indices.map { index ->
+        this.map { it.elementAt(index) }.joinToString("")
+    }
